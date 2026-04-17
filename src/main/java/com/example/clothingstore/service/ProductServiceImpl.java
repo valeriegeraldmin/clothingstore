@@ -3,6 +3,7 @@ package com.example.clothingstore.service;
 import com.example.clothingstore.entity.Product;
 import com.example.clothingstore.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -37,5 +38,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
 public List<Product> searchProductsByTitle(String title) {
     return productRepository.findByTitleContainingIgnoreCase(title);
+}
+@Override
+public List<Product> getAllProducts(Sort sort) {
+    return productRepository.findAll(sort);
 }
 }
