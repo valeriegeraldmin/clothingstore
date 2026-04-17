@@ -1,4 +1,6 @@
 <a href="/add-product">Add Product</a>
+<a href="/add-product">Add Product</a> |
+<a href="/cart">View Cart</a>
 
 <form action="/search" method="get">
     <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by title" />
@@ -24,10 +26,10 @@
     <td th:text="${product.id}"></td>
     <td th:text="${product.title}"></td>
     <td th:text="${product.price}"></td>
-    <td>
-        <a th:href="@{/edit-product/{id}(id=${product.id})}">Edit</a>
-        |
-        <a th:href="@{/delete-product/{id}(id=${product.id})}">Delete</a>
-    </td>
+   <td>
+    <a th:href="@{/edit-product/{id}(id=${product.id})}">Edit</a> |
+    <a th:href="@{/delete-product/{id}(id=${product.id})}">Delete</a> |
+    <a th:href="@{/cart/add/{id}(id=${product.id})}">Add to Cart</a>
+</td>
 </tr>
 </table>
