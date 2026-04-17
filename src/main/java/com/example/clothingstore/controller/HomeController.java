@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class HomeController {
@@ -38,5 +39,22 @@ public class HomeController {
 public String deleteProduct(@PathVariable Long id) {
     productService.deleteProduct(id);
     return "redirect:/";
+}
+@GetMapping("/edit-product/{id}")
+public String showEditProductForm(@PathVariable Long id, Model model) {
+    Product product = productService.getProductById(id);
+    model.addAttribute("product", product);
+    return "edit-product";
+}
+@PostMapping("/update-product")
+public String updateProduct(Product product) {
+    productService.saveProduct(product);
+    return "redirect:/";
+}
+@GetMapping("/search")
+public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
+    model.addAttribute("products", productService.searchProductsByTitle(keyword));
+    model.addAttribute("keyword", keyword);
+    return "index";
 }
 }
