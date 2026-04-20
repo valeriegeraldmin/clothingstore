@@ -5,6 +5,7 @@ import com.example.clothingstore.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.example.clothingstore.factory.ProductFactory;
 
 import org.springframework.data.domain.Sort;
 import java.util.List;
@@ -41,11 +42,12 @@ public class HomeController {
         return "add-product";
     }
 
-    @PostMapping("/save-product")
-    public String saveProduct(Product product) {
-        productService.saveProduct(product);
-        return "redirect:/";
-    }
+   @PostMapping("/save-product")
+public String saveProduct(Product product) {
+    Product newProduct = ProductFactory.createProduct(product.getTitle(), product.getPrice());
+    productService.saveProduct(newProduct);
+    return "redirect:/";
+}
 
     @GetMapping("/delete-product/{id}")
     public String deleteProduct(@PathVariable Long id) {
