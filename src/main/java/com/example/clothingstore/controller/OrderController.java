@@ -31,25 +31,38 @@ public class OrderController {
 
     @PostMapping("/place-order")
     public String placeOrder(Order order, Model model, HttpSession session) {
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+    List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
-        if (cart != null) {
-            for (CartItem item : cart) {
-                Product product = item.getProduct();
+    com.example.clothingstore.entity.User loggedInUser =
+            (com.example.clothingstore.entity.User) session.getAttribute("loggedInUser");
 
-                int newStock = product.getStockQuantity() - item.getQuantity();
-                product.setStockQuantity(newStock);
+    if (loggedInUser != null) {
+        order.setCustomerName(loggedInUser.getUsername());
+    }
 
-                productService.saveProduct(product);
-            }
+    if (cart != null) {
+        double total = 0.0;
+
+        for (CartItem item : cart) {
+            Product product = item.getProduct();
+
+            int newStock = product.getStockQuantity() - item.getQuantity();
+            product.setStockQuantity(newStock);
+
+            productService.saveProduct(product);
+
+            total += product.getPrice() * item.getQuantity();
         }
 
-        orderService.saveOrder(order);
-        session.removeAttribute("cart");
-
-        model.addAttribute("order", order);
-        return "confirmation";
+        order.setTotalPrice(total);
     }
+
+    orderService.saveOrder(order);
+    session.removeAttribute("cart");
+
+    model.addAttribute("order", order);
+    return "confirmation";
+}
 
     @GetMapping("/orders")
     public String viewOrders(Model model) {

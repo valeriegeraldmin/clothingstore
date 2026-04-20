@@ -58,4 +58,15 @@ public class UserController {
         session.invalidate();
         return "redirect:/login";
     }
+    @GetMapping("/admin/customers")
+    public String viewCustomers(Model model, HttpSession session) {
+    User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+    if (loggedInUser == null || !"ADMIN".equals(loggedInUser.getRole())) {
+        return "redirect:/login";
+    }
+
+    model.addAttribute("users", userService.getAllUsers());
+    return "customers";
+    }
 }
