@@ -1,19 +1,27 @@
 package com.example.clothingstore.controller;
 
+import com.example.clothingstore.entity.CartItem;
 import com.example.clothingstore.entity.Order;
+import com.example.clothingstore.entity.Product;
 import com.example.clothingstore.service.OrderService;
+import com.example.clothingstore.service.ProductService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class OrderController {
 
     private final OrderService orderService;
+    private final ProductService productService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, ProductService productService) {
         this.orderService = orderService;
+        this.productService = productService;
     }
 
     @GetMapping("/checkout")
@@ -22,15 +30,30 @@ public class OrderController {
     }
 
     @PostMapping("/place-order")
-public String placeOrder(Order order, Model model) {
-    System.out.println("customerName = " + order.getCustomerName());
-    System.out.println("address = " + order.getAddress());
-    System.out.println("phone = " + order.getPhone());
-    System.out.println("totalPrice = " + order.getTotalPrice());
+    public String placeOrder(Order order, Model model, HttpSession session) {
+        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
-    orderService.saveOrder(order);
+        if (cart != null) {
+            for (CartItem item : cart) {
+                Product product = item.getProduct();
 
-    model.addAttribute("order", order);
-    return "confirmation";
-}
+                int newStock = product.getStockQuantity() - item.getQuantity();
+                product.setStockQuantity(newStock);
+
+                productService.saveProduct(product);
+            }
+        }
+
+        orderService.saveOrder(order);
+        session.removeAttribute("cart");
+
+        model.addAttribute("order", order);
+        return "confirmation";
+    }
+
+    @GetMapping("/orders")
+    public String viewOrders(Model model) {
+        model.addAttribute("orders", orderService.getAllOrders());
+        return "orders";
+    }
 }

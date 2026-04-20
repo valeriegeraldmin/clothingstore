@@ -1,5 +1,60 @@
-<a href="/add-product">Add Product</a>
-<a href="/cart">View Cart</a>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Clothing Store</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 70%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .nav {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Welcome to Clothing Store</h1>
+
+<div class="nav">
+    <a href="/products"><button>Products</button></a>
+    <a href="/cart"><button>Cart</button></a>
+    <a href="/orders"><button>Orders</button></a>
+    <a href="/add-product"><button>Add Product</button></a>
+</div>
 
 <form action="/search" method="get">
     <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by title" />
@@ -8,27 +63,30 @@
 
 <br>
 
-<a href="/sort?field=title&direction=asc">Sort Title Asc</a> |
-<a href="/sort?field=title&direction=desc">Sort Title Desc</a> |
-<a href="/sort?field=price&direction=asc">Sort Price Asc</a> |
-<a href="/sort?field=price&direction=desc">Sort Price Desc</a>
+<a href="/sort?field=title&direction=asc">Sort Title ↑</a> |
+<a href="/sort?field=title&direction=desc">Sort Title ↓</a> |
+<a href="/sort?field=price&direction=asc">Sort Price ↑</a> |
+<a href="/sort?field=price&direction=desc">Sort Price ↓</a>
 
-<br><br>
-<table border="1">
+<table>
     <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Price</th>
-    <th>Action</th>
-</tr>
-<tr th:each="product : ${products}">
-    <td th:text="${product.id}"></td>
-    <td th:text="${product.title}"></td>
-    <td th:text="${product.price}"></td>
-   <td>
-    <a th:href="@{/edit-product/{id}(id=${product.id})}">Edit</a> |
-    <a th:href="@{/delete-product/{id}(id=${product.id})}">Delete</a> |
-    <a th:href="@{/cart/add/{id}(id=${product.id})}">Add to Cart</a>
-</td>
-</tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price (€)</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.title}"></td>
+        <td th:text="${product.price}"></td>
+        <td>
+            <a th:href="@{/edit-product/{id}(id=${product.id})}">Edit</a> |
+            <a th:href="@{/delete-product/{id}(id=${product.id})}">Delete</a> |
+            <a th:href="@{/cart/add/{id}(id=${product.id})}">Add</a>
+        </td>
+    </tr>
 </table>
+
+</body>
+</html>

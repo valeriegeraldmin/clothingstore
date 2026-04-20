@@ -16,4 +16,7 @@ public class OrderService {
     public Order saveOrder(Order order) {
         return orderRepository.save(order);
     }
+    public java.util.List<Order> getAllOrders() {
+    return orderRepository.findAll();
+}
 }
