@@ -1,7 +1,6 @@
 package com.example.clothingstore.service;
 
 import com.example.clothingstore.entity.Product;
-
 import java.util.List;
 import org.springframework.data.domain.Sort;
 
@@ -18,4 +17,6 @@ public interface ProductService {
     List<Product> searchProductsByTitle(String title);
 
     List<Product> getAllProducts(Sort sort);
+
+    List<Product> getSortedProducts(String sortType);
 }

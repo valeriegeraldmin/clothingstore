@@ -4,12 +4,10 @@ import com.example.clothingstore.entity.Product;
 import com.example.clothingstore.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 @Controller
 public class HomeController {
@@ -21,8 +19,19 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+    public String home(
+            @RequestParam(value = "sortType", required = false) String sortType,
+            Model model) {
+
+        List<Product> products;
+
+        if (sortType != null && !sortType.isEmpty()) {
+            products = productService.getSortedProducts(sortType);
+        } else {
+            products = productService.getAllProducts();
+        }
+
+        model.addAttribute("products", products);
         return "index";
     }
 
@@ -37,38 +46,43 @@ public class HomeController {
         productService.saveProduct(product);
         return "redirect:/";
     }
+
     @GetMapping("/delete-product/{id}")
-public String deleteProduct(@PathVariable Long id) {
-    productService.deleteProduct(id);
-    return "redirect:/";
-}
-@GetMapping("/edit-product/{id}")
-public String showEditProductForm(@PathVariable Long id, Model model) {
-    Product product = productService.getProductById(id);
-    model.addAttribute("product", product);
-    return "edit-product";
-}
-@PostMapping("/update-product")
-public String updateProduct(Product product) {
-    productService.saveProduct(product);
-    return "redirect:/";
-}
-@GetMapping("/search")
-public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
-    model.addAttribute("products", productService.searchProductsByTitle(keyword));
-    model.addAttribute("keyword", keyword);
-    return "index";
-}
-@GetMapping("/sort")
-public String sortProducts(@RequestParam("field") String field,
-                           @RequestParam("direction") String direction,
-                           Model model) {
+    public String deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return "redirect:/";
+    }
 
-    Sort sort = direction.equalsIgnoreCase("asc")
-            ? Sort.by(field).ascending()
-            : Sort.by(field).descending();
+    @GetMapping("/edit-product/{id}")
+    public String showEditProductForm(@PathVariable Long id, Model model) {
+        Product product = productService.getProductById(id);
+        model.addAttribute("product", product);
+        return "edit-product";
+    }
 
-    model.addAttribute("products", productService.getAllProducts(sort));
-    return "index";
-}
+    @PostMapping("/update-product")
+    public String updateProduct(Product product) {
+        productService.saveProduct(product);
+        return "redirect:/";
+    }
+
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
+        model.addAttribute("products", productService.searchProductsByTitle(keyword));
+        model.addAttribute("keyword", keyword);
+        return "index";
+    }
+
+    @GetMapping("/sort")
+    public String sortProducts(@RequestParam("field") String field,
+                              @RequestParam("direction") String direction,
+                              Model model) {
+
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(field).ascending()
+                : Sort.by(field).descending();
+
+        model.addAttribute("products", productService.getAllProducts(sort));
+        return "index";
+    }
 }
