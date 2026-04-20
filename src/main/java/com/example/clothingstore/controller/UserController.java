@@ -26,8 +26,9 @@ public class UserController {
 
     @PostMapping("/register")
     public String registerUser(User user) {
-        userService.register(user);
-        return "redirect:/login";
+    user.setRole("CUSTOMER");
+    userService.register(user);
+    return "redirect:/login";
     }
 
     @GetMapping("/login")
