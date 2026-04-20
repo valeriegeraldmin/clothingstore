@@ -1,13 +1,12 @@
 package com.example.clothingstore.controller;
 
 import com.example.clothingstore.entity.Product;
+import com.example.clothingstore.factory.ProductFactory;
 import com.example.clothingstore.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.example.clothingstore.factory.ProductFactory;
 
-import org.springframework.data.domain.Sort;
 import java.util.List;
 
 @Controller
@@ -20,9 +19,8 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(
-            @RequestParam(value = "sortType", required = false) String sortType,
-            Model model) {
+    public String home(@RequestParam(value = "sortType", required = false) String sortType,
+                       Model model) {
 
         List<Product> products;
 
@@ -42,12 +40,12 @@ public class HomeController {
         return "add-product";
     }
 
-   @PostMapping("/save-product")
-public String saveProduct(Product product) {
-    Product newProduct = ProductFactory.createProduct(product.getTitle(), product.getPrice());
-    productService.saveProduct(newProduct);
-    return "redirect:/";
-}
+    @PostMapping("/save-product")
+    public String saveProduct(Product product) {
+        Product newProduct = ProductFactory.createProduct(product.getTitle(), product.getPrice());
+        productService.saveProduct(newProduct);
+        return "redirect:/";
+    }
 
     @GetMapping("/delete-product/{id}")
     public String deleteProduct(@PathVariable Long id) {
@@ -72,19 +70,6 @@ public String saveProduct(Product product) {
     public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
         model.addAttribute("products", productService.searchProductsByTitle(keyword));
         model.addAttribute("keyword", keyword);
-        return "index";
-    }
-
-    @GetMapping("/sort")
-    public String sortProducts(@RequestParam("field") String field,
-                              @RequestParam("direction") String direction,
-                              Model model) {
-
-        Sort sort = direction.equalsIgnoreCase("asc")
-                ? Sort.by(field).ascending()
-                : Sort.by(field).descending();
-
-        model.addAttribute("products", productService.getAllProducts(sort));
         return "index";
     }
 }

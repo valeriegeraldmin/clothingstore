@@ -5,32 +5,56 @@
 
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
             padding: 20px;
+            background-color: #f9f9f9;
         }
 
         h1 {
             color: #333;
+            margin-bottom: 20px;
         }
 
-        a {
+        .nav {
+            margin-bottom: 20px;
+        }
+
+        .nav a {
             text-decoration: none;
             margin-right: 10px;
         }
 
         button {
-            padding: 6px 10px;
+            padding: 8px 12px;
             cursor: pointer;
+            border: none;
+            background-color: #333;
+            color: white;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        form {
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            padding: 8px;
+            margin-right: 10px;
         }
 
         table {
             border-collapse: collapse;
-            width: 70%;
+            width: 80%;
             margin-top: 20px;
+            background-color: white;
         }
 
         th, td {
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             text-align: center;
         }
@@ -39,13 +63,14 @@
             background-color: #f2f2f2;
         }
 
-        .nav {
-            margin-bottom: 20px;
+        .actions a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #0066cc;
         }
 
-        .sort-box {
-            margin-top: 15px;
-            margin-bottom: 15px;
+        .actions a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -55,36 +80,27 @@
 <h1>Welcome to Clothing Store</h1>
 
 <div class="nav">
-    <a href="/products"><button>Products</button></a>
-    <a href="/cart"><button>Cart</button></a>
-    <a href="/orders"><button>Orders</button></a>
-    <a href="/add-product"><button>Add Product</button></a>
+    <a href="/"><button type="button">Products</button></a>
+    <a href="/cart"><button type="button">Cart</button></a>
+    <a href="/orders"><button type="button">Orders</button></a>
+    <a href="/add-product"><button type="button">Add Product</button></a>
 </div>
 
 <form action="/search" method="get">
-    <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by title" />
+    <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by title">
     <button type="submit">Search</button>
 </form>
 
-<div class="sort-box">
-    <form action="/" method="get">
-        <label for="sortType">Sort By:</label>
-        <select name="sortType" id="sortType">
-            <option value="">-- Select --</option>
-            <option value="priceAsc">Price: Low to High</option>
-            <option value="priceDesc">Price: High to Low</option>
-            <option value="name">Name: A-Z</option>
-        </select>
-        <button type="submit">Sort</button>
-    </form>
-</div>
-
-<br>
-
-<a href="/sort?field=title&direction=asc">Sort Title ↑</a> |
-<a href="/sort?field=title&direction=desc">Sort Title ↓</a> |
-<a href="/sort?field=price&direction=asc">Sort Price ↑</a> |
-<a href="/sort?field=price&direction=desc">Sort Price ↓</a>
+<form action="/" method="get">
+    <label for="sortType">Sort By:</label>
+    <select name="sortType" id="sortType">
+        <option value="">-- Select --</option>
+        <option value="priceAsc" th:selected="${param.sortType != null and param.sortType[0] == 'priceAsc'}">Price: Low to High</option>
+        <option value="priceDesc" th:selected="${param.sortType != null and param.sortType[0] == 'priceDesc'}">Price: High to Low</option>
+        <option value="name" th:selected="${param.sortType != null and param.sortType[0] == 'name'}">Name: A-Z</option>
+    </select>
+    <button type="submit">Sort</button>
+</form>
 
 <table>
     <tr>
@@ -98,7 +114,7 @@
         <td th:text="${product.id}"></td>
         <td th:text="${product.title}"></td>
         <td th:text="${product.price}"></td>
-        <td>
+        <td class="actions">
             <a th:href="@{/edit-product/{id}(id=${product.id})}">Edit</a> |
             <a th:href="@{/delete-product/{id}(id=${product.id})}">Delete</a> |
             <a th:href="@{/cart/add/{id}(id=${product.id})}">Add</a>
